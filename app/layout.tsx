@@ -1,14 +1,35 @@
+import { Inter as FontSans } from "@next/font/google";
+
 import "../styles/globals.css";
 
-export default function RootLayout({
-  children,
-}: {
+import { cn } from "@/lib/utils";
+import { Analytics } from "@/components/analytics";
+import { TailwindIndicator } from "@/components/tailwind-indicator";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+interface RootLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html>
+    <html
+      lang='en'
+      className={cn(
+        "bg-white font-sans text-slate-900 antialiased",
+        fontSans.variable
+      )}
+    >
       <head />
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+        <TailwindIndicator />
+      </body>
     </html>
   );
 }

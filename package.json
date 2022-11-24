@@ -1,14 +1,22 @@
 {
+  "name": "ucf-database-systems-team-project",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "turbo": "next dev --turbo",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "preview": "next build && next start"
   },
   "dependencies": {
+    "@next/font": "^13.0.5",
+    "@vercel/analytics": "^0.1.5",
+    "clsx": "^1.2.1",
     "next": "latest",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "tailwind-merge": "^1.8.0"
   },
   "devDependencies": {
     "@types/node": "18.11.3",
