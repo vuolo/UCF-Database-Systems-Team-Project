@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import hero from "../../public/images/hero.png";
+import hero from "@/public/images/hero.png";
 import { siteConfig } from "@/config/site";
 
 export default async function IndexPage() {

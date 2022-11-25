@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 
+import knightro from "@/public/images/knightro.png";
 import { Icons, UCFLogo } from "@/components/icons";
 import { UserAuthForm } from "@/components/dashboard/user-auth-form";
 
@@ -12,7 +14,15 @@ export default function SignUpPage() {
       >
         Sign in
       </Link>
-      <div className='hidden h-full bg-slate-100 lg:block' />
+      <div className='hidden h-full bg-slate-100 lg:flex lg:justify-center lg:items-center'>
+        <Image
+          src={knightro}
+          // width={600}
+          alt='Sign Up'
+          priority
+          className='p-20'
+        />
+      </div>
       <div className='lg:p-8'>
         <div className='mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
           <div className='flex flex-col space-y-2 text-center'>
