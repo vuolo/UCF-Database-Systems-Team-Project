@@ -4,7 +4,7 @@ import Link from "next/link";
 import { MainNavItem } from "types";
 import { cn } from "@/lib/utils";
 import { useLockBody } from "@/hooks/use-lock-body";
-import { Icons } from "./icons";
+import { Icons, UCFLogo } from "./icons";
 import { siteConfig } from "@/config/site";
 
 interface MobileNavProps {
@@ -23,7 +23,8 @@ export function MobileNav({ items, children }: MobileNavProps) {
     >
       <div className='relative z-20 grid gap-6 rounded-md bg-white p-4 shadow-md'>
         <Link href='/' className='flex items-center space-x-2'>
-          <Icons.logo />
+          {/* <Icons.logo /> */}
+          <UCFLogo />
           <span className='font-bold'>{siteConfig.name}</span>
         </Link>
         <nav className='grid grid-flow-row auto-rows-max text-sm'>

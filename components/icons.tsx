@@ -12,6 +12,7 @@ import {
   HelpCircle,
   Image,
   Loader2,
+  Menu,
   MoreVertical,
   Pizza,
   Plus,
@@ -27,6 +28,7 @@ export type Icon = LucideIcon;
 
 export const Icons = {
   logo: Command,
+  menu: Menu,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
