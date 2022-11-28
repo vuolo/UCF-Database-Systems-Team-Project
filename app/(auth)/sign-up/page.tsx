@@ -2,10 +2,16 @@ import Link from "next/link";
 import Image from "next/image";
 
 import knightro from "@/public/images/knightro.png";
+import { getCurrentUser } from "@/lib/session";
 import { Icons, UCFLogo } from "@/components/icons";
 import { UserAuthForm } from "@/components/dashboard/user-auth-form";
+import { ClientRedirect } from "@/components/client-redirect";
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const user = await getCurrentUser();
+
+  if (user) return <ClientRedirect />;
+
   return (
     <div className='container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0'>
       <Link
