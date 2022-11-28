@@ -98,4 +98,5 @@ export const authOptions: NextAuthOptions = {
       };
     },
   },
+  secret: "Cl3V3rD0C?!",
 };
