@@ -58,7 +58,12 @@ CREATE TABLE `verification_tokens` (
 CREATE TABLE `surveys` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `content` JSON NULL,
+    `image` VARCHAR(191) NULL,
+    `description` TEXT NOT NULL,
+    -- TODO: participant_emails as (string[]),
+    -- TODO: questions as JSON NOT NULL,
+    `start_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `end_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `published` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

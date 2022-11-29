@@ -9,6 +9,8 @@ import {
   File,
   FileText,
   Github,
+  Hand,
+  HandMetal,
   HelpCircle,
   Image,
   Loader2,
@@ -29,6 +31,8 @@ export type Icon = LucideIcon;
 export const Icons = {
   logo: Command,
   menu: Menu,
+  hand: Hand,
+  handMetal: HandMetal,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,

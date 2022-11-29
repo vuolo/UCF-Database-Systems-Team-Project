@@ -1,10 +1,16 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
 import hero from "@/public/images/hero.png";
 import { siteConfig } from "@/config/site";
+import { getCurrentUser } from "@/lib/session";
 
 export default async function IndexPage() {
+  const user = await getCurrentUser();
+
+  if (user) redirect("/surveys");
+
   return (
     <>
       <section className='container grid items-center justify-center gap-6 pt-6 pb-8 md:pt-10 md:pb-12 lg:pt-16 lg:pb-24'>

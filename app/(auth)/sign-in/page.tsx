@@ -1,14 +1,14 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { getCurrentUser } from "@/lib/session";
 import { Icons, UCFLogo } from "@/components/icons";
 import { UserAuthForm } from "@/components/dashboard/user-auth-form";
-import { ClientRedirect } from "@/components/client-redirect";
 
 export default async function SignInPage() {
   const user = await getCurrentUser();
 
-  if (user) return <ClientRedirect />;
+  if (user) redirect("/surveys");
 
   return (
     <div className='container flex h-screen w-screen flex-col items-center justify-center'>

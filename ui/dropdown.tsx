@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+import * as React from "react";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-type DropdownMenuProps = DropdownMenuPrimitive.DropdownMenuProps
+type DropdownMenuProps = DropdownMenuPrimitive.DropdownMenuProps;
 
 export function DropdownMenu({ ...props }: DropdownMenuProps) {
-  return <DropdownMenuPrimitive.Root {...props} />
+  return <DropdownMenuPrimitive.Root {...props} />;
 }
 
 DropdownMenu.Trigger = React.forwardRef<
   HTMLButtonElement,
   DropdownMenuPrimitive.DropdownMenuTriggerProps
 >(function DropdownMenuTrigger({ ...props }, ref) {
-  return <DropdownMenuPrimitive.Trigger {...props} ref={ref} />
-})
+  return <DropdownMenuPrimitive.Trigger {...props} ref={ref} />;
+});
 
-DropdownMenu.Portal = DropdownMenuPrimitive.Portal
+DropdownMenu.Portal = DropdownMenuPrimitive.Portal;
 
 DropdownMenu.Content = React.forwardRef<
   HTMLDivElement,
@@ -27,15 +27,15 @@ DropdownMenu.Content = React.forwardRef<
   return (
     <DropdownMenuPrimitive.Content
       ref={ref}
-      align="end"
+      align='end'
       className={cn(
         "overflow-hidden rounded-md border border-slate-50 bg-white shadow-md animate-in slide-in-from-top-1 md:w-32",
         className
       )}
       {...props}
     />
-  )
-})
+  );
+});
 
 DropdownMenu.Item = React.forwardRef<
   HTMLDivElement,
@@ -50,8 +50,8 @@ DropdownMenu.Item = React.forwardRef<
       )}
       {...props}
     />
-  )
-})
+  );
+});
 
 DropdownMenu.Separator = React.forwardRef<
   HTMLDivElement,
@@ -63,5 +63,5 @@ DropdownMenu.Separator = React.forwardRef<
       className={cn("h-px bg-slate-200", className)}
       {...props}
     />
-  )
-})
+  );
+});
