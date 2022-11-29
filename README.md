@@ -2,7 +2,7 @@
 
 **Surveys for UCF students.**
 
-_Hosted with [Vercel](https://vercel.com) using the domain [ucf.vercel.app](https://ucf.vercel.app)._
+_Hosted with [Vercel](https://vercel.com){:target="\_blank"} using the domain [ucf.vercel.app](https://ucf.vercel.app){:target="\_blank"}._
 
 ## Features
 
