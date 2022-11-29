@@ -27,21 +27,13 @@ export function SurveyCreateButton({
       },
       body: JSON.stringify({
         title: "Untitled Survey",
+        description: "",
       }),
     });
 
     setIsLoading(false);
 
     if (!response?.ok) {
-      // TODO: remove this in production? This would be if we want a PRO plan w/ Stripe api...
-      if (response.status === 402) {
-        return toast({
-          title: "Limit of 3 surveys reached.",
-          message: "Please upgrade to the PRO plan.",
-          type: "error",
-        });
-      }
-
       return toast({
         title: "Something went wrong.",
         message: "Your survey was not created. Please try again.",
