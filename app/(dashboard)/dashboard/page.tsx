@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
+import { authOptions } from "@/lib/auth";
 import { getCurrentUser } from "@/lib/session";
 import { User } from "@prisma/client";
-import { authOptions } from "@/lib/auth";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { SurveyCreateButton } from "@/components/dashboard/survey-create-button";
 import { DashboardShell } from "@/components/dashboard/shell";
@@ -30,10 +30,7 @@ async function getSurveysForUser(userId: User["id"]) {
 export default async function DashboardPage() {
   const user = await getCurrentUser();
 
-  if (!user) {
-    // redirect(authOptions?.pages?.signIn || "/sign-in");
-    return <p>Not logged in</p>;
-  }
+  if (!user) redirect(authOptions?.pages?.signIn || "/sign-in");
 
   const surveys = await getSurveysForUser(user.id);
 

@@ -23,7 +23,8 @@ export default async function SurveysPage() {
             Surveys
           </h1>
           <p className='text-xl text-slate-600'>
-            Student surveys built using MySQL.
+            Student surveys built using MySQL. All active surveys are listed
+            below.
           </p>
         </div>
         <Link
@@ -68,7 +69,7 @@ export default async function SurveysPage() {
           ))}
         </div>
       ) : (
-        <p>There are no active surveys.</p>
+        <p>There are currently no active surveys...</p>
       )}
     </div>
   );

@@ -8,7 +8,7 @@ export function SiteFooter() {
         <div className='flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0'>
           <UCFLogo />
           <p className='text-center text-sm leading-loose md:text-left'>
-            Hosted on{" "}
+            Built by Team Project Group 16. Hosted on{" "}
             <a
               href='https://vercel.com'
               target='_blank'
