@@ -23,7 +23,7 @@ interface EditorPageProps {
 export default async function EditorPage({ params }: EditorPageProps) {
   const user = await getCurrentUser();
 
-  if (!user) redirect(authOptions?.pages?.signIn || "/sign-in");
+  if (!user) return redirect(authOptions?.pages?.signIn || "/sign-in");
 
   const survey = await getSurveyForUser(params.surveyId, user.id);
 

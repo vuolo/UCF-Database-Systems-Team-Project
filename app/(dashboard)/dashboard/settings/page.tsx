@@ -9,7 +9,7 @@ import { UserNameForm } from "@/components/dashboard/user-name-form";
 export default async function SettingsPage() {
   const user = await getCurrentUser();
 
-  if (!user) redirect(authOptions?.pages?.signIn || "/sign-in");
+  if (!user) return redirect(authOptions?.pages?.signIn || "/sign-in");
 
   return (
     <DashboardShell>

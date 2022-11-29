@@ -32,8 +32,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const body = surveyPatchSchema.parse(req.body);
 
-      // TODO: Implement sanitization for description? (only if we use ContentLayer Markdown (.mdx) in production).
-
       await db.survey.update({
         where: {
           id: survey?.id,

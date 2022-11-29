@@ -16,7 +16,7 @@ export default async function DashboardLayout({
 }: DashboardLayoutProps) {
   const user = await getCurrentUser();
 
-  if (!user) redirect(authOptions?.pages?.signIn || "/sign-in");
+  if (!user) return redirect(authOptions?.pages?.signIn || "/sign-in");
 
   return (
     <div className='mx-auto flex flex-col space-y-6'>

@@ -30,7 +30,7 @@ async function getSurveysForUser(userId: User["id"]) {
 export default async function DashboardPage() {
   const user = await getCurrentUser();
 
-  if (!user) redirect(authOptions?.pages?.signIn || "/sign-in");
+  if (!user) return redirect(authOptions?.pages?.signIn || "/sign-in");
 
   const surveys = await getSurveysForUser(user.id);
 

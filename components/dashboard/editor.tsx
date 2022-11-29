@@ -103,9 +103,15 @@ export function Editor({ survey }: EditorProps) {
             className='w-full resize-none appearance-none overflow-hidden text-5xl font-bold focus:outline-none'
             {...register("title")}
           />
-          {/* TODO: add textarea for description instead of */}
-          <div id='editor' className='min-h-[500px]' />{" "}
-          {/* TODO: remove this line above in production... */}
+          <TextareaAutosize
+            autoFocus
+            // name='description'
+            id='description'
+            defaultValue={survey.description}
+            placeholder='Description'
+            className='w-full resize-none appearance-none overflow-hidden text-xl focus:outline-none'
+            {...register("description")}
+          />
         </div>
       </div>
     </form>
