@@ -54,6 +54,8 @@ CREATE TABLE `verification_tokens` (
     UNIQUE INDEX `verification_tokens_identifier_token_key`(`identifier`, `token`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- TODO: add survey responses table
+
 -- CreateTable
 CREATE TABLE `surveys` (
     `id` VARCHAR(191) NOT NULL,
