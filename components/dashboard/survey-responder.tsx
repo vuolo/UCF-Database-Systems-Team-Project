@@ -98,21 +98,25 @@ export function SurveyResponder({
     });
 
     // Update Survey Response IDs
-    let jsonResponse = await response.json();
-    if (
-      typeof jsonResponse.responses != "undefined" &&
-      jsonResponse.responses.length == responses.length
-    )
-      setResponses((prev) =>
-        prev.map((r, rIndex) =>
-          r.id == "undefined"
-            ? {
-                ...r,
-                id: jsonResponse.responses[rIndex].id,
-              }
-            : r
-        )
-      );
+    try {
+      let jsonResponse = await response.json();
+      if (
+        typeof jsonResponse.responses != "undefined" &&
+        jsonResponse.responses.length == responses.length
+      )
+        setResponses((prev) =>
+          prev.map((r, rIndex) =>
+            r.id == "undefined"
+              ? {
+                  ...r,
+                  id: jsonResponse.responses[rIndex].id,
+                }
+              : r
+          )
+        );
+    } catch (error) {
+      console.log(error);
+    }
 
     setIsSaving(false);
 

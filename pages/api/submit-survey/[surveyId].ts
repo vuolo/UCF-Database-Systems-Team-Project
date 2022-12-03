@@ -70,4 +70,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default withMethods(["PATCH"], withSurvey(handler));
+export default withMethods(["PATCH"], withSurvey(handler, true));

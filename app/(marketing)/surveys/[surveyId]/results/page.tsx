@@ -6,6 +6,7 @@ import notFound from "../not-found";
 import NotActive from "../not-active";
 import NotPublished from "../not-published";
 import NotAuthenticated from "../not-authenticated";
+import { SurveyResults } from "@/components/dashboard/survey-results";
 
 interface SurveyPageProps {
   params: {
@@ -37,10 +38,14 @@ async function getSurveyResponsesForUser(
   respondentId: User["id"]
 ) {
   return (await db.$queryRaw`
-    SELECT *
-    FROM survey_responses
+    SELECT sr.*, u.email respondentEmail
+    FROM (
+      survey_responses AS sr 
+      INNER JOIN users AS u 
+      ON (sr.respondentId = u.id)
+    )
     WHERE surveyId=${surveyId}
-`) as SurveyResponse[];
+`) as (SurveyResponse & { respondentEmail: string })[];
 }
 
 export default async function SurveyPage({ params }: SurveyPageProps) {
@@ -66,7 +71,21 @@ export default async function SurveyPage({ params }: SurveyPageProps) {
 
   return (
     <>
-      <p>TODO: Results here...</p>
+      <SurveyResults
+        survey={{
+          id: survey.id,
+          title: survey.title,
+          description: survey.description,
+          published: survey.published,
+          startAt: survey.startAt,
+          endAt: survey.endAt,
+        }}
+        incomingQuestions={surveyQuestions}
+        incomingResponses={surveyResponses}
+        user={{
+          id: user.id,
+        }}
+      />
     </>
   );
 }

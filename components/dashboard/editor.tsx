@@ -112,21 +112,25 @@ export function Editor({ survey, incomingQuestions }: EditorProps) {
     });
 
     // Update Survey Question IDs
-    let jsonResponse = await response.json();
-    if (
-      typeof jsonResponse.questions != "undefined" &&
-      jsonResponse.questions.length == questions.length
-    )
-      setQuestions((prev) =>
-        prev.map((q, qIndex) =>
-          q.id == "undefined"
-            ? {
-                ...q,
-                id: jsonResponse.questions[qIndex].id,
-              }
-            : q
-        )
-      );
+    try {
+      let jsonResponse = await response.json();
+      if (
+        typeof jsonResponse.questions != "undefined" &&
+        jsonResponse.questions.length == questions.length
+      )
+        setQuestions((prev) =>
+          prev.map((q, qIndex) =>
+            q.id == "undefined"
+              ? {
+                  ...q,
+                  id: jsonResponse.questions[qIndex].id,
+                }
+              : q
+          )
+        );
+    } catch (error) {
+      console.log(error);
+    }
 
     setIsSaving(false);
 
