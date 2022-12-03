@@ -90,6 +90,8 @@ CREATE TABLE `survey_responses` (
     `surveyId` VARCHAR(191) NOT NULL,
     `respondentId` VARCHAR(191) NOT NULL,
     `type` INTEGER NOT NULL,
+    `type_1_answer` INTEGER NULL,
+    `type_2_answer` VARCHAR(191) NULL,
 
     INDEX `survey_responses_surveyId_idx`(`surveyId`),
     INDEX `survey_responses_questionId_idx`(`questionId`),

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { authOptions } from "@/lib/auth";
 import { getCurrentUser } from "@/lib/session";
-import { User } from "@prisma/client";
+import { Survey, User } from "@prisma/client";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { SurveyCreateButton } from "@/components/dashboard/survey-create-button";
 import { DashboardShell } from "@/components/dashboard/shell";
@@ -11,20 +11,12 @@ import { SurveyItem } from "@/components/dashboard/survey-item";
 import { EmptyPlaceholder } from "@/components/dashboard/empty-placeholder";
 
 async function getSurveysForUser(userId: User["id"]) {
-  return await db.survey.findMany({
-    where: {
-      authorId: userId,
-    },
-    select: {
-      id: true,
-      title: true,
-      published: true,
-      createdAt: true,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
+  return (await db.$queryRaw`
+    SELECT id, title, published, createdAt
+    FROM surveys
+    WHERE authorId=${userId}
+    ORDER BY updatedAt DESC
+  `) as Survey[];
 }
 
 export default async function DashboardPage() {

@@ -29,6 +29,18 @@ export default async function EditorPage({ params }: EditorPageProps) {
 
   if (!survey) return notFound();
 
+  const surveyQuestions = await db.surveyQuestion.findMany({
+    select: {
+      id: true,
+      surveyId: true,
+      prompt: true,
+      type: true,
+    },
+    where: {
+      surveyId: survey.id,
+    },
+  });
+
   return (
     <Editor
       survey={{
@@ -36,7 +48,10 @@ export default async function EditorPage({ params }: EditorPageProps) {
         title: survey.title,
         description: survey.description,
         published: survey.published,
+        startAt: survey.startAt,
+        endAt: survey.endAt,
       }}
+      incomingQuestions={surveyQuestions}
     />
   );
 }

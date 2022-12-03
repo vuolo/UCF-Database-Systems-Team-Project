@@ -106,11 +106,13 @@ model SurveyQuestion {
 }
 
 model SurveyResponse {
-  id           String @id @default(cuid())
-  questionId   String
-  surveyId     String
-  respondentId String
-  type         Int
+  id            String  @id @default(cuid())
+  questionId    String
+  surveyId      String
+  respondentId  String
+  type          Int
+  type_1_answer Int?
+  type_2_answer String?
 
   respondent User           @relation(fields: [respondentId], references: [id])
   survey     Survey         @relation(fields: [surveyId], references: [id])
