@@ -46,7 +46,14 @@ export function SurveyCreateButton({
     // This forces a cache invalidation.
     router.refresh();
 
-    router.push(`/editor/${survey.id}`);
+    if (typeof window !== "undefined")
+      window.location.href =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        "/editor/" +
+        survey.id;
+    else router.push(`/editor/${survey.id}`);
   }
 
   return (

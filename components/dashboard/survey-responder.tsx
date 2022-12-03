@@ -99,7 +99,10 @@ export function SurveyResponder({
 
     // Update Survey Response IDs
     let jsonResponse = await response.json();
-    if (jsonResponse.responses)
+    if (
+      typeof jsonResponse.responses != "undefined" &&
+      jsonResponse.responses.length == responses.length
+    )
       setResponses((prev) =>
         prev.map((r, rIndex) =>
           r.id == "undefined"
