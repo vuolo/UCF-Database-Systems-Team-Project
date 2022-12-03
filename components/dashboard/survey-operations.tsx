@@ -48,6 +48,14 @@ export function SurveyOperations({ survey }: SurveyOperationsProps) {
                 Edit
               </Link>
             </DropdownMenu.Item>
+            <DropdownMenu.Item>
+              <Link
+                href={`/surveys/${survey.id}/results`}
+                className='flex w-full'
+              >
+                Results
+              </Link>
+            </DropdownMenu.Item>
             <DropdownMenu.Separator />
             <DropdownMenu.Item
               className='flex cursor-pointer items-center text-red-600 focus:bg-red-50'
