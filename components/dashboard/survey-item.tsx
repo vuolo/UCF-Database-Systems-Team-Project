@@ -22,6 +22,8 @@ export function SurveyItem({ survey }: SurveyItemProps) {
         <div>
           <p className='text-sm text-slate-600'>
             {formatDate(survey.createdAt?.toDateString())}
+            {" • "}
+            {survey.published ? "Published" : "Draft"}
           </p>
         </div>
       </div>

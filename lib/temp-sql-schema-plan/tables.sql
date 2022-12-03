@@ -15,7 +15,7 @@ CREATE TABLE `accounts` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `accounts_provider_providerAccountId_key`(`provider`, `providerAccountId`),
+    UNIQUE INDEX `accounts_provider_pro viderAccountId_key`(`provider`, `providerAccountId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -36,6 +36,7 @@ CREATE TABLE `users` (
     `name` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
     `emailVerified` DATETIME(3) NULL,
+    `passwordHash` VARCHAR(191) NULL, -- TODO: add password auth
     `image` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -54,21 +55,37 @@ CREATE TABLE `verification_tokens` (
     UNIQUE INDEX `verification_tokens_identifier_token_key`(`identifier`, `token`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- TODO: add survey responses table
+-- CreateTable
+CREATE TABLE `survey_responses` (
+  `id` VARCHAR(191) NOT NULL,
+  `question_id` VARCHAR(191) NOT NULL,
+  `survey_id` VARCHAR(191) NOT NULL,
+  `user_id` VARCHAR(191) NOT NULL,
+  `response_type_1` INT,
+  `response_type_2` TEXT,
+
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `survey_questions` (
+  `id` VARCHAR(191) NOT NULL,
+  `survey_id` VARCHAR(191) NOT NULL,
+  `question_prompt` TEXT NOT NULL,
+  `question_type` INT NOT NULL,
+
+  PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `surveys` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `image` VARCHAR(191) NULL,
     `description` TEXT NOT NULL,
-    -- TODO: participant_emails as (string[]),
-    -- TODO: questions as JSON NOT NULL,
-    `start_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `end_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `start_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `end_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `published` BOOLEAN NOT NULL DEFAULT false,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `created_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `authorId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -82,3 +99,15 @@ ALTER TABLE `sessions` ADD CONSTRAINT `sessions_userId_fkey` FOREIGN KEY (`userI
 
 -- AddForeignKey
 ALTER TABLE `surveys` ADD CONSTRAINT `surveys_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `survey_questions` ADD CONSTRAINT `survey_questions_survey_id_fkey` FOREIGN KEY (`survey_id`) REFERENCES `surveys`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `survey_responses` ADD CONSTRAINT `survey_responses_question_id_fkey` FOREIGN KEY (`question_id`) REFERENCES `survey_questions`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `survey_responses` ADD CONSTRAINT `survey_responses_survey_id_fkey` FOREIGN KEY (`survey_id`) REFERENCES `surveys`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `survey_responses` ADD CONSTRAINT `survey_responses_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

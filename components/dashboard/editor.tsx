@@ -5,6 +5,7 @@ import { Survey } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import TextareaAutosize from "react-textarea-autosize";
+import Switch from "react-switch";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -23,6 +24,10 @@ export function Editor({ survey }: EditorProps) {
   const { register, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(surveyPatchSchema),
   });
+  const [isPublished, setIsPublished] = React.useState<boolean>(
+    survey.published
+  );
+
   const router = useRouter();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
@@ -42,6 +47,7 @@ export function Editor({ survey }: EditorProps) {
       body: JSON.stringify({
         title: data.title,
         description: data.description,
+        published: isPublished,
       }),
     });
 
@@ -79,9 +85,17 @@ export function Editor({ survey }: EditorProps) {
                 Back
               </>
             </Link>
-            <p className='text-sm text-slate-600'>
-              {survey.published ? "Published" : "Draft"}
-            </p>
+            <div className='flex items-center space-x-2'>
+              <Switch
+                onChange={() => {
+                  setIsPublished((prev) => !prev);
+                }}
+                checked={isPublished}
+              />
+              <p className='text-sm text-slate-600'>
+                {isPublished ? "Published" : "Draft"}
+              </p>
+            </div>
           </div>
           <button
             type='submit'

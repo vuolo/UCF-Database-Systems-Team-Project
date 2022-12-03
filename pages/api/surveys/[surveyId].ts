@@ -39,6 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         data: {
           title: body.title || survey?.title,
           description: body.description,
+          published: body.published,
         },
       });
 

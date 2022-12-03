@@ -1,19 +1,31 @@
 import Link from "next/link";
-import Image from "next/image";
 import { compareDesc } from "date-fns";
 import { Survey } from "@prisma/client";
 
 import { formatDate } from "@/lib/utils";
 import { getCurrentUser } from "@/lib/session";
+import { db } from "@/lib/db";
 
 export default async function SurveysPage() {
   const user = await getCurrentUser();
 
-  const surveys: Survey[] = ([] as Survey[]) // TODO: get all active surveys
-    .filter((survey) => survey.published)
-    .sort((a, b) => {
-      return compareDesc(new Date(a.createdAt), new Date(b.createdAt));
-    });
+  const surveys = (
+    (await db.$queryRaw`
+
+    SELECT s.*, u.name authorName
+    FROM (
+      surveys AS s 
+      INNER JOIN users AS u 
+      ON (s.authorId = u.id)
+    )
+    WHERE published=1
+
+    `) as (Survey & {
+      authorName: string;
+    })[]
+  ).sort((a, b) => {
+    return compareDesc(new Date(a.endAt), new Date(b.endAt));
+  });
 
   return (
     <div className='container max-w-4xl py-6 lg:py-10'>
@@ -42,24 +54,21 @@ export default async function SurveysPage() {
               key={survey.id}
               className='group relative flex flex-col space-y-2'
             >
-              {survey.image && (
-                <Image
-                  src={survey.image}
-                  alt={survey.title}
-                  width={804}
-                  height={452}
-                  className='rounded-md border border-slate-200 bg-slate-200 transition-colors group-hover:border-slate-900'
-                  priority={index <= 1}
-                />
-              )}
               <h2 className='text-2xl font-extrabold'>{survey.title}</h2>
               {survey.description && (
                 <p className='text-slate-600'>{survey.description}</p>
               )}
-              {/* TODO: update real-time 'Ends in ' + new Date(endAt) - new Date() */}
-              {survey.createdAt && (
+              {/* TODO: show authorId.name AND authorId.image */}
+              {/* {survey.createdAt && (
                 <p className='text-sm text-slate-600'>
                   {formatDate(survey.createdAt.getTime())}
+                </p>
+              )} */}
+              {/* TODO: update real-time 'Ends in ' + new Date(endAt) - new Date() */}
+              {survey.endAt && (
+                <p className='text-sm text-slate-600'>
+                  Created by {survey.authorName} • Ends on{" "}
+                  {formatDate(survey.endAt.getTime())}
                 </p>
               )}
               <Link href={`/surveys/${survey.id}`} className='absolute inset-0'>

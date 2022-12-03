@@ -7,9 +7,10 @@ generator client {
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  relationMode      = "prisma"
 }
 
 model Account {
@@ -25,12 +26,13 @@ model Account {
   scope             String?
   id_token          String?  @db.Text
   session_state     String?
-  createdAt         DateTime @default(now()) @map(name: "created_at")
-  updatedAt         DateTime @default(now()) @map(name: "updated_at")
+  createdAt         DateTime @default(now()) // @map(name: "created_at")
+  updatedAt         DateTime @default(now()) // @map(name: "updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
   @@map(name: "accounts")
 }
 
@@ -41,6 +43,7 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map(name: "sessions")
 }
 
@@ -50,12 +53,13 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+  createdAt     DateTime  @default(now()) // @map(name: "created_at")
+  updatedAt     DateTime  @default(now()) // @map(name: "updated_at")
 
-  accounts Account[]
-  sessions Session[]
-  surveys  Survey[]
+  accounts         Account[]
+  sessions         Session[]
+  surveys          Survey[]
+  survey_responses SurveyResponse[]
 
   @@map(name: "users")
 }
@@ -71,19 +75,51 @@ model VerificationToken {
 
 model Survey {
   id          String   @id @default(cuid())
-  title       String
-  image       String?
-  description String
-  // TODO: participant_emails as string[]
-  // TODO: questions as Json
-  startAt     DateTime @default(now()) @map(name: "start_at")
-  endAt       DateTime @default(now()) @map(name: "end_at")
-  published   Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map(name: "created_at")
-  updatedAt   DateTime @default(now()) @map(name: "updated_at")
   authorId    String
+  title       String
+  description String
+  startAt     DateTime @default(now()) // @map(name: "start_at")
+  endAt       DateTime @default(now()) // @map(name: "end_at")
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now()) // @map(name: "created_at")
+  updatedAt   DateTime @default(now()) // @map(name: "updated_at")
 
-  author User @relation(fields: [authorId], references: [id])
+  author           User             @relation(fields: [authorId], references: [id])
+  survey_questions SurveyQuestion[]
+  survey_responses SurveyResponse[]
 
+  @@index([authorId])
   @@map(name: "surveys")
 }
+
+model SurveyQuestion {
+  id       String @id @default(cuid())
+  surveyId String
+  prompt   String
+  type     Int
+
+  survey           Survey           @relation(fields: [surveyId], references: [id])
+  survey_responses SurveyResponse[]
+
+  @@index([surveyId])
+  @@map(name: "survey_questions")
+}
+
+model SurveyResponse {
+  id           String @id @default(cuid())
+  questionId   String
+  surveyId     String
+  respondentId String
+  type         Int
+
+  respondent User           @relation(fields: [respondentId], references: [id])
+  survey     Survey         @relation(fields: [surveyId], references: [id])
+  question   SurveyQuestion @relation(fields: [questionId], references: [id])
+
+  @@index([surveyId])
+  @@index([questionId])
+  @@index([respondentId])
+  @@map(name: "survey_responses")
+}
+
+// I got rid of the foreign keys because PlanetScale prefers to not use foreign keys for schema purposes (https://vitess.io/blog/2021-06-15-online-ddl-why-no-fk/)
