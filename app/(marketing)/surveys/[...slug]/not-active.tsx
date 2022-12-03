@@ -6,7 +6,7 @@ export default function NotActive() {
   return (
     <EmptyPlaceholder className='mx-auto max-w-[800px] mt-20'>
       <EmptyPlaceholder.Icon name='warning' />
-      <EmptyPlaceholder.Title>Uh oh! Not Active</EmptyPlaceholder.Title>
+      <EmptyPlaceholder.Title>Uh oh! Inactive Survey</EmptyPlaceholder.Title>
       <EmptyPlaceholder.Description>
         This survey is no-longer active.
       </EmptyPlaceholder.Description>
