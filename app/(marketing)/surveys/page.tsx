@@ -27,6 +27,8 @@ export default async function SurveysPage() {
     return compareDesc(new Date(a.endAt), new Date(b.endAt));
   });
 
+  // TODO: filter ONLY ACTIVE surveys!!!
+
   return (
     <div className='container max-w-4xl py-6 lg:py-10'>
       <div className='flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8'>
@@ -68,6 +70,7 @@ export default async function SurveysPage() {
               {survey.endAt && (
                 <p className='text-sm text-slate-600'>
                   Created by {survey.authorName} • Ends on{" "}
+                  {/* TODO: format time to client timezone/ETC */}
                   {formatDate(survey.endAt.getTime())}
                 </p>
               )}

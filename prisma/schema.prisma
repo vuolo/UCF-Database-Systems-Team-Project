@@ -122,4 +122,4 @@ model SurveyResponse {
   @@map(name: "survey_responses")
 }
 
-// I got rid of the foreign keys because PlanetScale prefers to not use foreign keys for schema purposes (https://vitess.io/blog/2021-06-15-online-ddl-why-no-fk/)
+// NOTE: I got rid of the foreign keys because PlanetScale prefers to not use foreign keys for schema purposes (https://vitess.io/blog/2021-06-15-online-ddl-why-no-fk/)
