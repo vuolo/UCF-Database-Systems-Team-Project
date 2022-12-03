@@ -246,17 +246,21 @@ export function SurveyResponder({
               : null}
 
             <div className='flex items-center justify-center pb-6'>
-              <button
-                type='submit'
-                className='relative inline-flex h-9 items-center rounded-md border border-transparent bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2'
-              >
-                {isSaving && (
-                  <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
-                )}
-                <span>
-                  {isSaving ? "Submitting Responses..." : "Submit Responses"}
-                </span>
-              </button>
+              {responses.length && responses.length > 0 ? (
+                <button
+                  type='submit'
+                  className='relative inline-flex h-9 items-center rounded-md border border-transparent bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2'
+                >
+                  {isSaving && (
+                    <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
+                  )}
+                  <span>
+                    {isSaving ? "Submitting Responses..." : "Submit Responses"}
+                  </span>
+                </button>
+              ) : (
+                <p>There are no questions...</p>
+              )}
             </div>
           </div>
         </div>
