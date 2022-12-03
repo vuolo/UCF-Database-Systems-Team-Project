@@ -1,31 +1,49 @@
-import { Survey } from "@prisma/client";
+import { Survey, SurveyQuestion } from "@prisma/client";
 
 import { db } from "@/lib/db";
+import { getCurrentUser } from "@/lib/session";
 import notFound from "./not-found";
 import NotActive from "./not-active";
+import NotPublished from "./not-published";
+import NotAuthenticated from "./not-authenticated";
 
 interface SurveyPageProps {
   params: {
-    slug: string[];
+    surveyId: string;
   };
 }
 
 async function getSurvey(surveyId: Survey["id"]) {
-  return await db.survey.findFirst({
-    where: {
-      id: surveyId,
-    },
-  });
+  return (
+    (await db.$queryRaw`
+    SELECT *
+    FROM surveys
+    WHERE id=${surveyId}
+  `) as Survey[]
+  )[0];
+}
+
+async function getSurveyQuestions(surveyId: Survey["id"]) {
+  return (await db.$queryRaw`
+  SELECT *
+  FROM survey_questions
+  WHERE surveyId=${surveyId}
+`) as SurveyQuestion[];
 }
 
 export default async function SurveyPage({ params }: SurveyPageProps) {
-  const slug = params?.slug?.join("/");
+  const surveyId = params?.surveyId;
 
-  const survey = await getSurvey(slug);
-
+  const survey = await getSurvey(surveyId);
   if (!survey) return notFound();
+  if (!survey.published) return NotPublished();
   // TODO: ALSO check if local time is within the survey's active start-end period.
-  if (!survey.published) return NotActive();
+  if (false) return NotActive();
+
+  const user = await getCurrentUser();
+  if (!user) return NotAuthenticated();
+
+  const surveyQuestions = await getSurveyQuestions(surveyId);
 
   return (
     <>
