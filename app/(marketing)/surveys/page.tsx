@@ -33,8 +33,6 @@ export default async function SurveysPage() {
         new Date(survey.endAt).getTime() >= new Date().getTime()
     );
 
-  // TODO: filter ONLY ACTIVE surveys!!!
-
   return (
     <div className='container max-w-4xl py-6 lg:py-10'>
       <div className='flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8'>
@@ -66,7 +64,7 @@ export default async function SurveysPage() {
               {survey.description && (
                 <p className='text-slate-600'>{survey.description}</p>
               )}
-              {/* TODO: show authorId.name AND authorId.image */}
+              {/* TODO: show authorId.image */}
               {/* {survey.createdAt && (
                 <p className='text-sm text-slate-600'>
                   {formatDate(survey.createdAt.getTime())}
@@ -78,8 +76,6 @@ export default async function SurveysPage() {
                   <u>Created by {survey.authorName}</u>
                   <br />
                   Ends: {/*on*/}
-                  {/* TODO: format time to client timezone/ETC */}
-                  {/* {formatDate(survey.endAt.getTime())} */}
                   {survey.endAt.toLocaleDateString("en-us", {
                     weekday: "long",
                     year: "numeric",
