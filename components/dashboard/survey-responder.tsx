@@ -165,7 +165,7 @@ export function SurveyResponder({
             <div className='flex flex-col'>
               <h3>Start Date</h3>
               <p>
-                {endAt.toLocaleDateString("en-us", {
+                {startAt.toLocaleDateString("en-us", {
                   weekday: "long",
                   year: "numeric",
                   month: "short",

@@ -23,9 +23,15 @@ export default async function SurveysPage() {
     `) as (Survey & {
       authorName: string;
     })[]
-  ).sort((a, b) => {
-    return compareDesc(new Date(a.endAt), new Date(b.endAt));
-  });
+  )
+    .sort((a, b) => {
+      return compareDesc(new Date(a.endAt), new Date(b.endAt));
+    })
+    .filter(
+      (survey) =>
+        new Date(survey.startAt).getTime() <= new Date().getTime() &&
+        new Date(survey.endAt).getTime() >= new Date().getTime()
+    );
 
   // TODO: filter ONLY ACTIVE surveys!!!
 
@@ -69,9 +75,19 @@ export default async function SurveysPage() {
               {/* TODO: update real-time 'Ends in ' + new Date(endAt) - new Date() */}
               {survey.endAt && (
                 <p className='text-sm text-slate-600'>
-                  Created by {survey.authorName} • Ends on{" "}
+                  <u>Created by {survey.authorName}</u>
+                  <br />
+                  Ends: {/*on*/}
                   {/* TODO: format time to client timezone/ETC */}
-                  {formatDate(survey.endAt.getTime())}
+                  {/* {formatDate(survey.endAt.getTime())} */}
+                  {survey.endAt.toLocaleDateString("en-us", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                  })}
                 </p>
               )}
               <Link href={`/surveys/${survey.id}`} className='absolute inset-0'>
