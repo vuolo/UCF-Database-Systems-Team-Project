@@ -19,14 +19,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       if (body?.name) {
         const payload = userNameSchema.parse(body);
 
-        await db.user.update({
-          where: {
-            id: user?.id,
-          },
-          data: {
-            name: payload.name,
-          },
-        });
+        await db.$queryRawUnsafe(`
+          UPDATE users SET name = '${payload.name}' WHERE id = '${user?.id}'
+        `);
       }
 
       return res.end();

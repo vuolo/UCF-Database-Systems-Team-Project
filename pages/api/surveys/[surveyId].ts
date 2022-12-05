@@ -1,20 +1,21 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import * as z from "zod";
+import { v4 as uuidv4 } from "uuid";
 
 import { withMethods } from "@/lib/api-middlewares/with-methods";
 import { withSurvey } from "@/lib/api-middlewares/with-survey";
 import { db } from "@/lib/db";
 import { surveyPatchSchema } from "@/lib/validations/survey";
-import { SurveyQuestion } from "@prisma/client";
+import { Survey, SurveyQuestion } from "@prisma/client";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "DELETE") {
     try {
-      await db.survey.delete({
-        where: {
-          id: req.query.surveyId as string,
-        },
-      });
+      await db.$queryRawUnsafe(`
+        DELETE 
+        FROM surveys 
+        WHERE id = "${req.query.surveyId}"
+      `);
 
       return res.status(204).end();
     } catch (error) {
@@ -25,39 +26,37 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "PATCH") {
     try {
       const surveyId = req.query.surveyId as string;
-      const survey = await db.survey.findUnique({
-        where: {
-          id: surveyId,
-        },
-      });
+      const survey = (
+        (await db.$queryRawUnsafe(`
+        SELECT * 
+        FROM surveys 
+        WHERE id = "${surveyId}"
+        `)) as Survey[]
+      )[0];
 
       const body = surveyPatchSchema.parse(req.body);
 
-      await db.survey.update({
-        where: {
-          id: survey?.id,
-        },
-        data: {
-          title: body.title || survey?.title,
-          description: body.description,
-          published: body.published,
-          startAt: new Date(body.startAt),
-          endAt: new Date(body.endAt),
-        },
-      });
+      await db.$queryRawUnsafe(`
+        UPDATE surveys SET title = "${
+          body.title || survey?.title
+        }", description = "${body.description}", published = ${
+        body.published
+      }, startAt = "${new Date(body.startAt)
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ")}", endAt = "${new Date(body.endAt)
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ")}"
+        WHERE id = "${survey?.id}"
+      `);
 
       // Retrieve survey questions that are already in the DB
-      const surveyQuestions = await db.surveyQuestion.findMany({
-        select: {
-          id: true,
-          surveyId: true,
-          prompt: true,
-          type: true,
-        },
-        where: {
-          surveyId: survey?.id,
-        },
-      });
+      const surveyQuestions = (await db.$queryRawUnsafe(`
+        SELECT id, surveyId, prompt, type
+        FROM survey_questions
+        WHERE surveyId = "${survey?.id}"
+      `)) as SurveyQuestion[];
 
       // Delete mismatched survey questions
       for (let i = 0; i < surveyQuestions.length; i++) {
@@ -74,11 +73,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         // Execute SQL DELETE
         if (!foundQuestionID)
           try {
-            await db.surveyQuestion.delete({
-              where: {
-                id: surveyQuestions[i].id,
-              },
-            });
+            await db.$queryRawUnsafe(`
+              DELETE FROM survey_questions WHERE id = "${surveyQuestions[i].id}"
+            `);
           } catch (error) {
             console.log(error);
           }
@@ -86,43 +83,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       body.questions.forEach(async (question: SurveyQuestion) => {
         if (question.id == "undefined") {
-          await db.surveyQuestion.create({
-            data: {
-              surveyId: question.surveyId,
-              prompt: question.prompt,
-              type: question.type,
-            },
-            select: {
-              id: true,
-            },
-          });
+          await db.$queryRawUnsafe(`
+            INSERT INTO survey_questions (id, surveyId, prompt, type)
+            VALUES ("${uuidv4()}", "${question.surveyId}", "${
+            question.prompt
+          }", ${question.type})
+          `);
         } else {
-          await db.surveyQuestion.update({
-            where: {
-              id: question.id,
-            },
-            data: {
-              prompt: question.prompt,
-              type: question.type,
-            },
-          });
+          await db.$queryRawUnsafe(`
+            UPDATE survey_questions
+            SET prompt = "${question.prompt}", type = ${question.type} 
+            WHERE id = "${question.id}"
+          `);
         }
       });
 
-      const newSurveyQuestions = await db.surveyQuestion.findMany({
-        select: {
-          id: true,
-          surveyId: true,
-          prompt: true,
-          type: true,
-        },
-        where: {
-          surveyId: survey?.id,
-        },
-      });
+      const newSurveyQuestions = (await db.$queryRawUnsafe(`
+        SELECT *
+        FROM survey_questions
+        WHERE surveyId = "${survey.id}"
+      `)) as SurveyQuestion[];
 
       return res.status(200).json({ questions: newSurveyQuestions });
     } catch (error) {
+      console.log(error);
+
       if (error instanceof z.ZodError) {
         return res.status(422).json(error.issues);
       }

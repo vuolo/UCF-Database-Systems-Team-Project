@@ -16,20 +16,20 @@ interface SurveyPageProps {
 
 async function getSurvey(surveyId: Survey["id"]) {
   return (
-    (await db.$queryRaw`
+    (await db.$queryRawUnsafe(`
     SELECT *
     FROM surveys
-    WHERE id=${surveyId}
-  `) as Survey[]
+    WHERE id="${surveyId}"
+  `)) as Survey[]
   )[0];
 }
 
 async function getSurveyQuestions(surveyId: Survey["id"]) {
-  return (await db.$queryRaw`
+  return (await db.$queryRawUnsafe(`
   SELECT *
   FROM survey_questions
-  WHERE surveyId=${surveyId}
-`) as SurveyQuestion[];
+  WHERE surveyId="${surveyId}"
+`)) as SurveyQuestion[];
 }
 
 async function getSurveyResponsesForUser(
@@ -37,15 +37,15 @@ async function getSurveyResponsesForUser(
   surveyId: Survey["id"],
   respondentId: User["id"]
 ) {
-  return (await db.$queryRaw`
+  return (await db.$queryRawUnsafe(`
     SELECT sr.*, u.email respondentEmail
     FROM (
       survey_responses AS sr 
       INNER JOIN users AS u 
       ON (sr.respondentId = u.id)
     )
-    WHERE surveyId=${surveyId}
-`) as (SurveyResponse & { respondentEmail: string })[];
+    WHERE surveyId="${surveyId}"
+`)) as (SurveyResponse & { respondentEmail: string })[];
 }
 
 export default async function SurveyPage({ params }: SurveyPageProps) {

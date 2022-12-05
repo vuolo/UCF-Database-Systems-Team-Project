@@ -11,12 +11,12 @@ import { SurveyItem } from "@/components/dashboard/survey-item";
 import { EmptyPlaceholder } from "@/components/dashboard/empty-placeholder";
 
 async function getSurveysForUser(userId: User["id"]) {
-  return (await db.$queryRaw`
-    SELECT id, title, published, createdAt
+  return (await db.$queryRawUnsafe(`
+    SELECT *
     FROM surveys
-    WHERE authorId=${userId}
+    WHERE authorId = "${userId}"
     ORDER BY updatedAt DESC
-  `) as Survey[];
+  `)) as Survey[];
 }
 
 export default async function DashboardPage() {

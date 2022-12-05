@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { Survey, User } from "@prisma/client";
+import { Survey, SurveyQuestion, User } from "@prisma/client";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
 import { authOptions } from "@/lib/auth";
@@ -8,12 +8,14 @@ import { Editor } from "@/components/dashboard/editor";
 import notFound from "./not-found";
 
 async function getSurveyForUser(surveyId: Survey["id"], userId: User["id"]) {
-  return await db.survey.findFirst({
-    where: {
-      id: surveyId,
-      authorId: userId,
-    },
-  });
+  return (
+    (await db.$queryRawUnsafe(`
+    SELECT *
+    FROM surveys
+    WHERE id = "${surveyId}" AND authorId = "${userId}"
+    LIMIT 1
+  `)) as Survey[]
+  )[0];
 }
 
 interface EditorPageProps {
@@ -29,17 +31,11 @@ export default async function EditorPage({ params }: EditorPageProps) {
 
   if (!survey) return notFound();
 
-  const surveyQuestions = await db.surveyQuestion.findMany({
-    select: {
-      id: true,
-      surveyId: true,
-      prompt: true,
-      type: true,
-    },
-    where: {
-      surveyId: survey.id,
-    },
-  });
+  const surveyQuestions = (await db.$queryRawUnsafe(`
+    SELECT *
+    FROM survey_questions
+    WHERE surveyId = "${survey.id}";
+  `)) as SurveyQuestion[];
 
   return (
     <Editor

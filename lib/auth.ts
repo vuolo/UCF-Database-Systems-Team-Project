@@ -4,6 +4,7 @@ import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { db } from "@/lib/db";
+import { User } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
   // huh any! I know.
@@ -32,14 +33,11 @@ export const authOptions: NextAuthOptions = {
       },
       from: process.env.SMTP_FROM,
       sendVerificationRequest: async ({ identifier, url, provider }) => {
-        const user = await db.user.findUnique({
-          where: {
-            email: identifier,
-          },
-          select: {
-            emailVerified: true,
-          },
-        });
+        const user = (
+          (await db.$queryRawUnsafe(`
+          SELECT * FROM users WHERE email = "${identifier}"
+        `)) as User[]
+        )[0];
 
         // const result = await postmarkClient.sendEmailWithTemplate({
         //   TemplateId: user?.emailVerified
@@ -79,11 +77,13 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async jwt({ token, user }) {
-      const dbUser = await db.user.findFirst({
-        where: {
-          email: token.email,
-        },
-      });
+      let dbUsers = (await db.$queryRawUnsafe(`
+        SELECT * FROM users
+        WHERE id = "${token.id}"
+        LIMIT 1;
+      `)) as User[];
+
+      let dbUser: User | undefined = dbUsers[0];
 
       if (!dbUser) {
         token.id = user?.id || "undefined";
