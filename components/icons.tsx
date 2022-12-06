@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Command,
   CreditCard,
+  Download,
   File,
   FileText,
   Github,
@@ -18,6 +19,7 @@ import {
   MoreVertical,
   Pizza,
   Plus,
+  Printer,
   Settings,
   Trash,
   Twitter,
@@ -30,6 +32,8 @@ export type Icon = LucideIcon;
 
 export const Icons = {
   logo: Command,
+  print: Printer,
+  download: Download,
   menu: Menu,
   hand: Hand,
   handMetal: HandMetal,

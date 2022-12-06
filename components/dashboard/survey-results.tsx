@@ -10,6 +10,8 @@ import DateTimePicker from "react-datetime-picker";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 import { surveyPatchSchema } from "@/lib/validations/survey";
 import { toast } from "@/ui/toast";
@@ -78,7 +80,10 @@ export function SurveyResults({
   if (!isMounted) return null;
 
   return (
-    <section className='container grid items-center justify-center gap-6 pt-6 pb-8 md:pt-10 md:pb-12 lg:pt-16 lg:pb-24'>
+    <section
+      id='results'
+      className='container grid items-center justify-center gap-6 pt-6 pb-8 md:pt-10 md:pb-12 lg:pt-16 lg:pb-24'
+    >
       <div className='mx-auto flex flex-col items-start gap-4 lg:w-[52rem]'>
         <h1 className='text-3xl font-bold leading-[1.1] tracking-tighter sm:text-5xl md:text-6xl'>
           Results for <u>{survey.title}</u>
@@ -86,62 +91,98 @@ export function SurveyResults({
         <p className='max-w-[42rem] leading-normal text-slate-700 sm:text-xl sm:leading-8'>
           {survey.description}
         </p>
+        <h2 className='mt-4 font-bold text-2xl'>Questions:</h2>
         <div className='flex flex-col space-y-1'>
-          {questions.length
-            ? questions.map((question, qIndex) => (
-                <div key={question.id + qIndex}>
-                  <h4 className='mt-2 flex space-x-2 font-bold'>
-                    {qIndex + 1}.{" "}
-                    <p className='ml-2 w-full resize-none appearance-none overflow-hidden text-l focus:outline-none'>
-                      {question.prompt}
-                    </p>
-                  </h4>
-                  <p>
-                    <u>Type:</u> {question.type}
+          {questions.length ? (
+            questions.map((question, qIndex) => (
+              <div key={question.id + qIndex}>
+                <h4 className='mt-2 flex space-x-2 font-bold'>
+                  {qIndex + 1}.{" "}
+                  <p className='ml-2 w-full resize-none appearance-none overflow-hidden text-l focus:outline-none'>
+                    {question.prompt}
                   </p>
-                  {question.type == 1 ? (
-                    <>
-                      <p>
-                        <u>Mean:</u> {calcMean(question.id)}
-                      </p>
-                      <p>
-                        <u>Variance:</u> {calcVariance(question.id)}
-                      </p>
-                      <p>
-                        <u>Answers:</u>
-                        {responses.map((response, responseIndex) =>
-                          response.questionId == question.id &&
-                          response.type_1_answer ? (
-                            <li key={response.id}>
-                              {response.respondentEmail}:{" "}
-                              {response.type_1_answer}
-                            </li>
-                          ) : null
-                        )}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p>
-                        <u>Answers:</u>
-                        {responses.map((response, responseIndex) =>
-                          response.questionId == question.id ? (
-                            <li key={response.id}>
-                              {response.respondentEmail}:{" "}
-                              {response.type_2_answer}
-                            </li>
-                          ) : null
-                        )}
-                      </p>
-                    </>
-                  )}
-                </div>
-              ))
-            : null}
+                </h4>
+                <p>
+                  <u>Type:</u> {question.type}
+                </p>
+                {question.type == 1 ? (
+                  <>
+                    <p>
+                      <u>Mean:</u> {calcMean(question.id)}
+                    </p>
+                    <p>
+                      <u>Variance:</u> {calcVariance(question.id)}
+                    </p>
+                    <p>
+                      <u>Answers:</u>
+                      {responses.map((response, responseIndex) =>
+                        response.questionId == question.id &&
+                        response.type_1_answer ? (
+                          <li key={response.id}>
+                            {/* {response.respondentEmail}: {response.type_1_answer} */}
+                            {response.type_1_answer}
+                          </li>
+                        ) : null
+                      )}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p>
+                      <u>Answers:</u>
+                      {responses.map((response, responseIndex) =>
+                        response.questionId == question.id ? (
+                          <li key={response.id}>
+                            {/* {response.respondentEmail}: {response.type_2_answer} */}
+                            {response.type_2_answer}
+                          </li>
+                        ) : null
+                      )}
+                    </p>
+                  </>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>There are no questions...</p>
+          )}
+
+          <div className='flex pt-5 space-x-3'>
+            <button
+              onClick={print}
+              className='relative inline-flex h-9 items-center rounded-md border border-transparent bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 print:hidden'
+            >
+              <Icons.print className='h-5 mr-3' />
+              <span>Print Results</span>
+            </button>
+            <button
+              onClick={savePDF}
+              className='relative inline-flex h-9 items-center rounded-md border border-transparent bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 print:hidden'
+            >
+              <Icons.download className='h-5 mr-3' />
+              <span>Save Results to Computer</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
   );
+}
+
+function savePDF() {
+  html2canvas(document.body).then(function (canvas) {
+    var img = canvas.toDataURL("image/png");
+    var doc = new jsPDF();
+    doc.addImage(
+      img,
+      "JPEG",
+      0,
+      0,
+      Math.round(window.innerWidth / 8),
+      Math.round(window.innerHeight / 8)
+    );
+    doc.save("survey-results.pdf");
+  });
 }
 
 const findVariance = (arr: number[] = []) => {

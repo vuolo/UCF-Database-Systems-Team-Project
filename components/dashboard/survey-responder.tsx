@@ -81,9 +81,22 @@ export function SurveyResponder({
   }, []);
 
   async function onSubmit(data: FormData) {
-    // TODO: check if responses are less than 200 words...
-
     setIsSaving(true);
+
+    // Check if each type 2 response has less than or equal to 200 words
+    const type2Responses = responses.filter((r) => r.type == 2);
+    const type2ResponsesWithTooManyWords = type2Responses.filter(
+      (r) => r.type_2_answer!.split(" ").length > 200
+    );
+
+    if (type2ResponsesWithTooManyWords.length > 0) {
+      setIsSaving(false);
+      return toast({
+        title: "Too many words (>200) in at least one of your responses.",
+        message: "Your survey responses were not submitted. Please try again.",
+        type: "error",
+      });
+    }
 
     const response = await fetch(`/api/submit-survey/${survey.id}`, {
       method: "PATCH",

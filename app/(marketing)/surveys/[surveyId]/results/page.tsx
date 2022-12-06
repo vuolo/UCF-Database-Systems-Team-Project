@@ -53,14 +53,11 @@ export default async function SurveyPage({ params }: SurveyPageProps) {
 
   const survey = await getSurvey(surveyId);
   if (!survey) return notFound();
-  if (!survey.published) return NotPublished();
-  // TODO: ALSO check if local time is within the survey's active start-end period.
-  if (false) return NotActive();
 
   const user = await getCurrentUser();
   if (!user) return NotAuthenticated();
 
-  // TODO: also check whether the user is allowed access to this survey.
+  // TODO: also check whether the user is the survey author access to this survey.
 
   const surveyQuestions = await getSurveyQuestions(surveyId);
   const surveyResponses = await getSurveyResponsesForUser(
