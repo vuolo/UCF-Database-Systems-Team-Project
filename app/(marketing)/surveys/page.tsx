@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { compareDesc } from "date-fns";
+import { compareAsc } from "date-fns";
 import { Survey } from "@prisma/client";
 
 import { formatDate } from "@/lib/utils";
@@ -9,8 +9,7 @@ import { db } from "@/lib/db";
 export default async function SurveysPage() {
   const user = await getCurrentUser();
 
-  const surveys = (
-    (await db.$queryRaw`
+  const surveys = (await db.$queryRaw`
 
     SELECT s.*, u.name authorName
     FROM (
@@ -18,20 +17,12 @@ export default async function SurveysPage() {
       INNER JOIN users AS u 
       ON (s.authorId = u.id)
     )
-    WHERE published=1
+    WHERE published=1 AND startAt <= NOW() AND endAt >= NOW()
+    ORDER BY endAt ASC
 
     `) as (Survey & {
-      authorName: string;
-    })[]
-  )
-    .sort((a, b) => {
-      return compareDesc(new Date(a.endAt), new Date(b.endAt));
-    })
-    .filter(
-      (survey) =>
-        new Date(survey.startAt).getTime() <= new Date().getTime() &&
-        new Date(survey.endAt).getTime() >= new Date().getTime()
-    );
+    authorName: string;
+  })[];
 
   return (
     <div className='container max-w-4xl py-6 lg:py-10'>
@@ -42,7 +33,7 @@ export default async function SurveysPage() {
           </h1>
           <p className='text-xl text-slate-600'>
             Student surveys built using MySQL. All active surveys are listed
-            below.
+            below and are sorted by closing (period end) dates.
           </p>
         </div>
         <Link

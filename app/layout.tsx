@@ -30,7 +30,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         {children}
         <Analytics />
         <Toaster position='bottom-right' />
-        <TailwindIndicator />
+        {/* <TailwindIndicator /> */}
       </body>
     </html>
   );

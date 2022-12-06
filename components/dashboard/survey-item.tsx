@@ -6,7 +6,7 @@ import { SurveyOperations } from "@/components/dashboard/survey-operations";
 import { Skeleton } from "@/ui/skeleton";
 
 interface SurveyItemProps {
-  survey: Pick<Survey, "id" | "title" | "published" | "createdAt">;
+  survey: Pick<Survey, "id" | "title" | "published" | "createdAt" | "endAt">;
 }
 
 export function SurveyItem({ survey }: SurveyItemProps) {
@@ -21,7 +21,16 @@ export function SurveyItem({ survey }: SurveyItemProps) {
         </Link>
         <div>
           <p className='text-sm text-slate-600'>
-            {formatDate(survey.createdAt?.toDateString())}
+            {/* {formatDate(survey.createdAt?.toDateString())} */}
+            Ends: {/*on*/}
+            {survey.endAt.toLocaleDateString("en-us", {
+              weekday: "long",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
             {" • "}
             {survey.published ? "Published" : "Draft"}
           </p>

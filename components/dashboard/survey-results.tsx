@@ -91,6 +91,35 @@ export function SurveyResults({
         <p className='max-w-[42rem] leading-normal text-slate-700 sm:text-xl sm:leading-8'>
           {survey.description}
         </p>
+        <div className='flex space-x-16'>
+          <div className='flex flex-col'>
+            <h3 className='font-bold'>Start Date</h3>
+            <p>
+              {new Date(survey.startAt).toLocaleDateString("en-us", {
+                weekday: "long",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+              })}
+            </p>
+          </div>
+
+          <div className='flex flex-col'>
+            <h3 className='font-bold'>End Date</h3>
+            <p>
+              {new Date(survey.endAt).toLocaleDateString("en-us", {
+                weekday: "long",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+              })}
+            </p>
+          </div>
+        </div>
         <h2 className='mt-4 font-bold text-2xl'>Questions:</h2>
         <div className='flex flex-col space-y-1'>
           {questions.length ? (

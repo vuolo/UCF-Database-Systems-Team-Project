@@ -85,6 +85,8 @@ export function Editor({ survey, incomingQuestions }: EditorProps) {
     );
   }
 
+  const [participants, setParticipants] = React.useState<string>("");
+
   const router = useRouter();
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
@@ -92,6 +94,51 @@ export function Editor({ survey, incomingQuestions }: EditorProps) {
   React.useEffect(() => {
     if (typeof window !== "undefined") setIsMounted(true);
   }, []);
+
+  async function sendEmail() {
+    try {
+      const response = await fetch(`/api/sendgrid`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          participants: participants.split(","),
+          surveyId: survey.id,
+          surveyTitle: survey.title,
+          surveyDescription: survey.description,
+          surveyStartAt: new Date(startAt).toLocaleDateString("en-us", {
+            weekday: "long",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+          }),
+          surveyEndAt: new Date(endAt).toLocaleDateString("en-us", {
+            weekday: "long",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+          }),
+          surveyLink: `http://localhost:3000/surveys/${survey.id}`,
+        }),
+      });
+
+      return toast({
+        message: "Email(s) sent to participants!",
+        type: "success",
+      });
+    } catch (err) {
+      return toast({
+        title: "Something went wrong.",
+        message: "Some or all email(s) were not sent properly.",
+        type: "error",
+      });
+    }
+  }
 
   async function onSubmit(data: FormData) {
     setIsSaving(true);
@@ -207,6 +254,22 @@ export function Editor({ survey, incomingQuestions }: EditorProps) {
             className='w-full resize-none appearance-none overflow-hidden text-xl focus:outline-none'
             {...register("description")}
           />
+
+          <div className='flex flex-col items-center space-y-2'>
+            <TextareaAutosize
+              onChange={(e) => setParticipants(e.target.value)}
+              value={participants}
+              placeholder='List valid participant emails separated by commas.'
+              className='mt-2 text-center w-full resize-none appearance-none overflow-hidden text-xl focus:outline-none'
+            />
+            <a
+              onClick={sendEmail}
+              className='cursor-pointer no-underline relative inline-flex h-9 items-center rounded-md border border-transparent bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2'
+            >
+              <Icons.send className='h-5 mr-2' />
+              <span>Send Email Invitation(s)</span>
+            </a>
+          </div>
 
           <div className='flex space-x-16'>
             <div className='flex flex-col'>

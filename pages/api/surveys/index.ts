@@ -40,8 +40,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
       const body = surveyCreateSchema.parse(req.body);
 
-      console.log("inserting survey");
-
       await db.$queryRawUnsafe(`
           INSERT INTO surveys (id, title, description, authorId)
           VALUES ("${uuidv4()}", "${body.title!}", "${body.description!}", "${
@@ -54,10 +52,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           SELECT * FROM surveys LIMIT 1;
       `) as Survey[]
       )[0];
-
-      console.log("inserted");
-
-      console.log(survey);
 
       return res.json(survey);
     } catch (error) {

@@ -15,7 +15,7 @@ async function getSurveysForUser(userId: User["id"]) {
     SELECT *
     FROM surveys
     WHERE authorId = "${userId}"
-    ORDER BY updatedAt DESC
+    ORDER BY endAt ASC
   `)) as Survey[];
 }
 
