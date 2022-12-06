@@ -49,7 +49,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const survey = (
         (await db.$queryRaw`
-          SELECT * FROM surveys LIMIT 1;
+          SELECT *
+          FROM surveys
+          ORDER BY endAt ASC
+          LIMIT 1;
       `) as Survey[]
       )[0];
 

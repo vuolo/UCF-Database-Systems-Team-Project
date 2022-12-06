@@ -246,7 +246,6 @@ export function Editor({ survey, incomingQuestions }: EditorProps) {
             {...register("title")}
           />
           <TextareaAutosize
-            autoFocus
             // name='description'
             id='description'
             defaultValue={survey.description}
@@ -340,7 +339,6 @@ export function Editor({ survey, incomingQuestions }: EditorProps) {
                     <h4 className='mt-2 flex space-x-2'>
                       {qIndex + 1}.{" "}
                       <TextareaAutosize
-                        autoFocus
                         onChange={(e) =>
                           setQuestionPrompt(e.target.value, qIndex)
                         }
